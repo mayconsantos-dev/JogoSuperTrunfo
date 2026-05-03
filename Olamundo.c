@@ -9,8 +9,29 @@ unsigned long int Populacao;
 float AreaKm;
 float PIB;
 int NumeroDePontosturisticos;
+/*
+Carta 1:
+Estado: c
+Código: A01
+Nome da Cidade: SãoPaulo
+População: 12325000
+Área: 1521.11 km²
+PIB: 699280000000 bilhões de reais
+Número de Pontos Turísticos: 50
+Densidade Populacional: 8102.47 hab/km²
+PIB per Capita: 56724.32 reais
 
-
+Carta 2:
+Estado: B
+Código: B02
+Nome da Cidade: RiodeJaneiro
+População: 67480000
+Área: 1200.25 km²
+PIB: 300500000000 bilhões de reais
+Número de Pontos Turísticos: 30
+Densidade Populacional: 5622.24 hab/km²
+PIB per Capita: 44532.91 reais
+*/
 char Estado2[20];
 char CodigodaCarta2[5];
 char NomeDaCidade2 [20];
@@ -95,20 +116,41 @@ printf("População:%ld\n Área em Km²:%.2f\n PIB:%.2F\n Numero de Pontos Turí
 printf("Densidade Populacional:%.2f hab/km²\n PIB per Capita:%.2f reais\n", DensidadePopulacional2, PIBperCapita2);
 printf("o super poder é: %.3f\n", SuperPoder2);
 
-// --- COMPARAÇÃO DE CARTAS ---
-printf("\nComparação de Cartas:\n");
+// --- COMPARAÇÃO DE CARTAS -
+if (Populacao > Populacao2){
+printf("População carta 1 %s venceu\n",NomeDaCidade);
+} else { printf("População carta 2 %s venceu\n",NomeDaCidade2);
+}
 
-// Para a maioria, o maior valor vence (Carta1 > Carta2)
-printf("População: Carta 1 venceu (%d)\n", Populacao > Populacao2);
-printf("Área: Carta 1 venceu (%d)\n", AreaKm > AreaKm2);
-printf("PIB: Carta 1 venceu (%d)\n", PIB > PIB2);
-printf("Pontos Turísticos: Carta 1 venceu (%d)\n", NumeroDePontosturisticos > NumeroDePontosturisticos2);
+if (PIB > PIB2){
+printf("PIB carta 1 %s venceu\n",NomeDaCidade);
+} else { printf("PIB carta 2 %s venceu\n",NomeDaCidade2);
+}
 
-// ATENÇÃO: Na Densidade Populacional, o MENOR valor vence!
-printf("Densidade Populacional: Carta 1 venceu (%d)\n", DensidadePopulacional < DensidadePopulacional2);
+if (NumeroDePontosturisticos > NumeroDePontosturisticos2){
+printf("NumeroDePontosturisticos carta 1 %s venceu\n",NomeDaCidade);
+} else { printf("NumeroDePontosturisticos carta 2 %s venceu\n",NomeDaCidade2);
+}
 
-printf("PIB per Capita: Carta 1 venceu (%d)\n", PIBperCapita > PIBperCapita2);
-printf("Super Poder: Carta 1 venceu (%d)\n", SuperPoder > SuperPoder2);
+if (DensidadePopulacional < DensidadePopulacional2){
+printf("DensidadePopulacional carta 1 %s venceu\n",NomeDaCidade);
+} else { printf("DensidadePopulacional carta 2 %s venceu\n",NomeDaCidade2);
+}
+
+
+if (PIBperCapita > PIBperCapita2){
+printf("PIBperCapita carta 1 %s venceu\n",NomeDaCidade);
+} else { printf("PIBperCapita carta 2 %s venceu\n",NomeDaCidade2);
+}
+
+
+if (SuperPoder > SuperPoder2){
+printf("SuperPoder carta 1 %s venceu\n",NomeDaCidade);
+} else { printf("SuperPoder carta 2 %s venceu\n",NomeDaCidade2);
+}
+
+
+
 
 return 0;
 }
