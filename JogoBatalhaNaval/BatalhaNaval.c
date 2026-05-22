@@ -1,84 +1,89 @@
 #include <stdio.h>
 
+#define linhas 10
+#define colunas 10
+
 int main() {
+    int matriz[linhas][colunas];
+    char letra[10] = {'A','B','C','D','E','F','G','H','I','J'};
     
+    // Variável para controle de erros de validação
+    int erro_validacao = 0;
 
-
-    char linha[10] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
-    int tabuleiro[10][10];
-  
-  
-
-    // 1. Preenchendo a matriz com zeros usando os dois loops 'for'
-    for (int i = 0; i < 10; i++) {
-        for (int j = 0; j < 10; j++) {
-            tabuleiro[i][j] = 0;
+    // =========================================================================
+    // ETAPA 1: Inicializar o Tabuleiro com 0 (Representando Água)
+    // =========================================================================
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            matriz[i][j] = 0;
         }
     }
 
-
-{
-
-    // Exemplo: Colocando o navio "3 3 3" na linha 3 (índice 2) para testar igual ao vídeo
-
-   tabuleiro[2][3] = 3;
-   tabuleiro[2][4] = 3;
-   tabuleiro[2][5] = 3;
-
-
-         tabuleiro[5][7] = 3; 
-     tabuleiro[6][7] = 3;
-     tabuleiro[7][7] = 3;
-
-}
-
-
-
-
-
-    // =======================================================
-    // 2. IMPRESSÃO DO TABULEIRO (Exatamente igual ao vídeo)
-    // =======================================================
+    // =========================================================================
+    // ETAPA 2: Posicionamento e Validação dos 4 Navios
+    // =========================================================================
     
-    printf("TABULEIRO BATALHA NAVAL\n");
+    /* --- NAVIO 1: Horizontal (Tamanho 3, Linha 0, Colunas 2 a 4) --- */
+    // Validação: Checa limites e sobreposição
+    if (0 < linhas && 4 < colunas && matriz[0][2] == 0 && matriz[0][3] == 0 && matriz[0][4] == 0) {
+        matriz[0][2] = 3; matriz[0][3] = 3; matriz[0][4] = 3;
+    } else {
+        erro_validacao = 1;
+    }
 
-    // Imprime o cabeçalho de letras: "  A B C D E F G H I J"
-    printf("   "); // Espaço inicial para alinhar com os números da lateral
+    /* --- NAVIO 2: Vertical (Tamanho 3, Coluna 7, Linhas 5 a 7) --- */
+    // Validação: Checa limites e sobreposição
+    if (7< linhas && 7 < colunas && matriz[5][7] == 0 && matriz[6][7] == 0 && matriz[7][7] == 0) {
+        matriz[5][7] = 3; matriz[6][7] = 3; matriz[7][7] = 3;
+    } else {
+        erro_validacao = 1;
+    }
+
+    /* --- NAVIO 3: Diagonal Esquerda (Tamanho 3, Linhas 2 a 4, Colunas 2 a 4) --- */
+    // Validação: Checa se as 3 posições estão livres na memória
+    if (matriz[2][2] == 0 && matriz[3][3] == 0 && matriz[4][4] == 0) {
+        matriz[2][2] = 3; matriz[3][3] = 3; matriz[4][4] = 3;
+    } else {
+        erro_validacao = 1;
+    }
+
+    /* --- NAVIO 4: Diagonal Direita (Tamanho 3, Linhas 1 a 3, Colunas 7 a 5) --- */
+    // Validação: Checa se as posições da diagonal secundária estão livres
+    if (matriz[1][7] == 0 && matriz[2][6] == 0 && matriz[3][5] == 0) {
+        matriz[1][7] = 3; matriz[2][6] = 3; matriz[3][5] = 3;
+    } else {
+        erro_validacao = 1;
+    }
+
+    // Alerta o programador caso ocorra alguma colisão ou erro de limite durante o desenvolvimento
+    if (erro_validacao == 1) {
+        printf("AVISO: Houve um erro de sobreposicao ou limite no posicionamento!\n\n");
+    }
+
+    // =========================================================================
+    // ETAPA 3: Exibição do Tabuleiro Completo
+    // =========================================================================
+    
+    // Imprime o cabeçalho de letras com espaçamento para alinhar
+    printf("   "); 
     for (int j = 0; j < 10; j++) {
-        printf("%c ", linha[j]);
+        printf("%c ", letra[j]);
     }
     printf("\n");
 
-    // Imprime as linhas com os números na lateral esquerda
-    for (int i = 0; i < 10; i++) {
+    // Loops aninhados que apenas LÊEM o tabuleiro já montado
+    for (int i = 0; i < linhas; i++) {
         
-        // Imprime o número da linha. 
-        // Usamos %-2d para que o "10" não empurre o tabuleiro para o lado
-        printf("%-2d ", i+1); 
-        
-        // Imprime os valores da matriz (os zeros ou navios)
-        for (int j = 0; j < 10; j++) {
-            printf("%d ", tabuleiro[i][j]);
+        // Imprime o número da linha na lateral esquerda (1 a 10)
+        printf("%-2d ", i + 1); 
+
+        for (int j = 0; j < colunas; j++) {
+            // Imprime o que está guardado na célula atual
+            printf("%d ", matriz[i][j]); 
         }
-        printf("\n"); // Quebra de linha ao final de cada linha da matriz
+        
+        printf("\n"); // Pula de linha ao terminar as 10 colunas
     }
 
-// Exibe a mensagem se a flag 'sobreposto' foi ativada
-  
-// =======================================================
-  // =======================================================
-    // EXIBIÇÃO DAS COORDENADAS (Corrigido e Alinhado)
-    // =======================================================
-    printf("\n--- COORDENADAS DOS NAVIOS ---\n");
-    
-    printf("Navio Horizontal (Tamanho 3):\n");
-    printf(" - Parte 1: Linha 3, Coluna %c (Coordenada: %c3)\n", linha[3], linha[3]);
-    printf(" - Parte 2: Linha 3, Coluna %c (Coordenada: %c3)\n", linha[4], linha[4]);
-    printf(" - Parte 3: Linha 3, Coluna %c (Coordenada: %c3)\n", linha[5], linha[5]);
-
-    printf("\nNavio Vertical (Tamanho 3):\n");
-    printf(" - Parte 1: Linha 6, Coluna %c (Coordenada: %c6)\n", linha[7], linha[7]);
-    printf(" - Parte 2: Linha 7, Coluna %c (Coordenada: %c7)\n", linha[7], linha[7]);
-    printf(" - Parte 3: Linha 8, Coluna %c (Coordenada: %c8)\n", linha[7], linha[7]);
-
+    return 0;
 }
