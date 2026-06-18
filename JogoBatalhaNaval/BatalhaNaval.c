@@ -1,88 +1,130 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-#define linhas 10
-#define colunas 10
+#define TAM_TABULEIRO 10
+#define TAM_HABILIDADE 5 // Matrizes de habilidade serão 5x5
 
 int main() {
-    int matriz[linhas][colunas];
-    char letra[10] = {'A','B','C','D','E','F','G','H','I','J'};
-    
-    // Variável para controle de erros de validação
+    int matriz[TAM_TABULEIRO][TAM_TABULEIRO];
     int erro_validacao = 0;
 
     // =========================================================================
     // ETAPA 1: Inicializar o Tabuleiro com 0 (Representando Água)
     // =========================================================================
-    for (int i = 0; i < linhas; i++) {
-        for (int j = 0; j < colunas; j++) {
+    for (int i = 0; i < TAM_TABULEIRO; i++) {
+        for (int j = 0; j < TAM_TABULEIRO; j++) {
             matriz[i][j] = 0;
         }
     }
 
     // =========================================================================
-    // ETAPA 2: Posicionamento e Validação dos 4 Navios
+    // ETAPA 2: Posicionamento dos Navios (Valor 3)
     // =========================================================================
-    
-    /* --- NAVIO 1: Horizontal (Tamanho 3, Linha 0, Colunas 2 a 4) --- */
-    // Validação: Checa limites e sobreposição
-    if (0 < linhas && 4 < colunas && matriz[0][2] == 0 && matriz[0][3] == 0 && matriz[0][4] == 0) {
+    if (matriz[0][2] == 0 && matriz[0][3] == 0 && matriz[0][4] == 0) {
         matriz[0][2] = 3; matriz[0][3] = 3; matriz[0][4] = 3;
-    } else {
-        erro_validacao = 1;
-    }
+    } else { erro_validacao = 1; }
 
-    /* --- NAVIO 2: Vertical (Tamanho 3, Coluna 7, Linhas 5 a 7) --- */
-    // Validação: Checa limites e sobreposição
-    if (7< linhas && 7 < colunas && matriz[5][7] == 0 && matriz[6][7] == 0 && matriz[7][7] == 0) {
+    if (matriz[5][7] == 0 && matriz[6][7] == 0 && matriz[7][7] == 0) {
         matriz[5][7] = 3; matriz[6][7] = 3; matriz[7][7] = 3;
-    } else {
-        erro_validacao = 1;
-    }
+    } else { erro_validacao = 1; }
 
-    /* --- NAVIO 3: Diagonal Esquerda (Tamanho 3, Linhas 2 a 4, Colunas 2 a 4) --- */
-    // Validação: Checa se as 3 posições estão livres na memória
     if (matriz[2][2] == 0 && matriz[3][3] == 0 && matriz[4][4] == 0) {
         matriz[2][2] = 3; matriz[3][3] = 3; matriz[4][4] = 3;
-    } else {
-        erro_validacao = 1;
-    }
+    } else { erro_validacao = 1; }
 
-    /* --- NAVIO 4: Diagonal Direita (Tamanho 3, Linhas 1 a 3, Colunas 7 a 5) --- */
-    // Validação: Checa se as posições da diagonal secundária estão livres
     if (matriz[1][7] == 0 && matriz[2][6] == 0 && matriz[3][5] == 0) {
         matriz[1][7] = 3; matriz[2][6] = 3; matriz[3][5] = 3;
-    } else {
-        erro_validacao = 1;
-    }
+    } else { erro_validacao = 1; }
 
-    // Alerta o programador caso ocorra alguma colisão ou erro de limite durante o desenvolvimento
-    if (erro_validacao == 1) {
-        printf("AVISO: Houve um erro de sobreposicao ou limite no posicionamento!\n\n");
+    // =========================================================================
+    // ETAPA 3: Criação Dinâmica das Matrizes de Habilidade (5x5)
+    // =========================================================================
+    int cone[TAM_HABILIDADE][TAM_HABILIDADE];
+    int cruz[TAM_HABILIDADE][TAM_HABILIDADE];
+    int octaedro[TAM_HABILIDADE][TAM_HABILIDADE];
+    int centro = TAM_HABILIDADE / 2; // Posição (2,2) é o centro absoluto
+
+    for (int i = 0; i < TAM_HABILIDADE; i++) {
+        for (int j = 0; j < TAM_HABILIDADE; j++) {
+            // Lógica do Cone (Expandindo para baixo a partir do centro)
+            if (i >= centro && j >= (centro - (i - centro)) && j <= (centro + (i - centro))) {
+                cone[i][j] = 1;
+            } else {
+                cone[i][j] = 0;
+            }
+
+            // Lógica da Cruz (Linha ou coluna central)
+            if (i == centro || j == centro) {
+                cruz[i][j] = 1;
+            } else {
+                cruz[i][j] = 0;
+            }
+
+            // Lógica do Octaedro/Losango (Distância de Manhattan <= raio)
+            if (abs(i - centro) + abs(j - centro) <= centro) {
+                octaedro[i][j] = 1;
+            } else {
+                octaedro[i][j] = 0;
+            }
+        }
     }
 
     // =========================================================================
-    // ETAPA 3: Exibição do Tabuleiro Completo
+    // ETAPA 4: Sobreposição das Habilidades no Tabuleiro (Valor 1)
     // =========================================================================
     
-    // Imprime o cabeçalho de letras com espaçamento para alinhar
-    printf("   "); 
-    for (int j = 0; j < 10; j++) {
-        printf("%c ", letra[j]);
+    // Definindo pontos de origem estratégicos no tabuleiro para replicar a saída
+    int origemConeLinha = 6, origemConeColuna = 3;      
+    int origemOctaedroLinha = 4, origemOctaedroColuna = 7; 
+
+    // Aplicando a habilidade em Cone no tabuleiro
+    for (int i = 0; i < TAM_HABILIDADE; i++) {
+        for (int j = 0; j < TAM_HABILIDADE; j++) {
+            if (cone[i][j] == 1) {
+                int tabLinha = origemConeLinha + (i - centro);
+                int tabColuna = origemConeColuna + (j - centro);
+                if (tabLinha >= 0 && tabLinha < TAM_TABULEIRO && tabColuna >= 0 && tabColuna < TAM_TABULEIRO) {
+                    // Substitui apenas se for água para não apagar o navio visualmente
+                    if (matriz[tabLinha][tabColuna] == 0) {
+                        matriz[tabLinha][tabColuna] = 1; 
+                    }
+                }
+            }
+        }
+    }
+
+    // Aplicando a habilidade em Octaedro no tabuleiro (área da direita na imagem)
+    for (int i = 0; i < TAM_HABILIDADE; i++) {
+        for (int j = 0; j < TAM_HABILIDADE; j++) {
+            if (octaedro[i][j] == 1) {
+                int tabLinha = origemOctaedroLinha + (i - centro);
+                int tabColuna = origemOctaedroColuna + (j - centro);
+                if (tabLinha >= 0 && tabLinha < TAM_TABULEIRO && tabColuna >= 0 && tabColuna < TAM_TABULEIRO) {
+                    matriz[tabLinha][tabColuna] = 2; // Representado por '2' para diferenciar no mapa da imagem
+                }
+            }
+        }
+    }
+
+    // =========================================================================
+    // ETAPA 5: Exibição do Tabuleiro (Idêntico ao Terminal do VS Code)
+    // =========================================================================
+    
+    // Cabeçalho numérico de colunas (0 a 9) com o alinhamento correto
+    printf("  "); 
+    for (int j = 0; j < TAM_TABULEIRO; j++) {
+        printf("%d ", j);
     }
     printf("\n");
 
-    // Loops aninhados que apenas LÊEM o tabuleiro já montado
-    for (int i = 0; i < linhas; i++) {
-        
-        // Imprime o número da linha na lateral esquerda (1 a 10)
-        printf("%-2d ", i + 1); 
+    // Corpo do tabuleiro com índices laterais de 0 a 9
+    for (int i = 0; i < TAM_TABULEIRO; i++) {
+        printf("%d ", i); // Índice da linha lateral esquerda
 
-        for (int j = 0; j < colunas; j++) {
-            // Imprime o que está guardado na célula atual
+        for (int j = 0; j < TAM_TABULEIRO; j++) {
             printf("%d ", matriz[i][j]); 
         }
-        
-        printf("\n"); // Pula de linha ao terminar as 10 colunas
+        printf("\n"); 
     }
 
     return 0;
